@@ -12,13 +12,13 @@ const MongoStore = require('connect-mongo');
 
 require('dotenv').config({ path: 'variables.env' });
 
-
 const app = express();
 
 // Habilitar Handlebars como View Engine
 app.engine('handlebars',
     exphbs.engine({
-        defaultLayout: 'layout'
+        defaultLayout: 'layout',
+        helpers: require('./helpers/handlebars')
     })
 );
 
