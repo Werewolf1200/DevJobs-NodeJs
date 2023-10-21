@@ -15,6 +15,7 @@
   "author": "Saúl CM",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "concurrently": "^8.2.1",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "^1.4.6",
