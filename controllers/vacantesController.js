@@ -4,7 +4,9 @@ const Vacante = mongoose.model('Vacante');
 exports.formularioNuevaVacante = (req, res) => {
     res.render('nueva-vacante', {
         nombrePagina: 'Nueva Vacante',
-        tagline: 'Llena el formulario y publica tu vacante'
+        tagline: 'Llena el formulario y publica tu vacante',
+        cerrarSesion: true,
+        nombre: req.user.nombre
     });
 }
 
@@ -48,7 +50,9 @@ exports.formEditarVacante = async (req, res, next) => {
 
     res.render('editar-vacante', {
         vacante,
-        nombrePagina: `Editar - ${vacante.titulo}`
+        nombrePagina: `Editar - ${vacante.titulo}`,
+        cerrarSesion: true,
+        nombre: req.user.nombre
     })
 }
 
@@ -63,4 +67,39 @@ exports.editarVacante = async (req, res) => {
     });
 
     res.redirect(`/vacantes/${vacante.url}`);
+}
+
+// Validar y Sanitizar los campos de las nuevas vacantes
+exports.validarVacante = (req, res, next) => {
+    // Sanitizar Campos
+    req.sanitizeBody('titulo').escape();
+    req.sanitizeBody('empresa').escape();
+    req.sanitizeBody('ubicacion').escape();
+    req.sanitizeBody('salario').escape();
+    req.sanitizeBody('contrato').escape();
+    req.sanitizeBody('skills').escape();
+
+    // Validar
+    req.checkBody('titulo', 'Agrega un Titulo a la Vacante').notEmpty();
+    req.checkBody('empresa', 'Agrega una Empresa').notEmpty();
+    req.checkBody('ubicacion', 'Agrega una Ubicación').notEmpty();
+    req.checkBody('contrato', 'Selecciona el Tipo de Contrato').notEmpty();
+    req.checkBody('skills', 'Agrega al menos una habilidadd').notEmpty();
+
+    const errores = req.validationErrors();
+
+    if (errores) {
+        // Recargar la Vista con errores
+        req.flash('error', errores.map(error => error.msg));
+
+         res.render('nueva-vacante', {
+            nombrePagina: 'Nueva Vacante',
+            tagline: 'Llena el formulario y publica tu vacante',
+            cerrarSesion: true,
+            nombre: req.user.nombre,
+            mensajes: req.flash()
+        })
+    }
+
+    next(); // Siguiente Middleware
 }

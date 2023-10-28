@@ -14,6 +14,7 @@ module.exports = () => {
         vacantesController.formularioNuevaVacante);
     router.post('/vacantes/nueva',
         authController.verificarUsuario,
+        //vacantesController.validarVacante,
         vacantesController.agregarVacante);
 
     // Mostrar Una Vacante
@@ -25,6 +26,7 @@ module.exports = () => {
         vacantesController.formEditarVacante)
     router.post('/vacantes/editar/:url',
         authController.verificarUsuario,
+        //vacantesController.validarVacante,
         vacantesController.editarVacante)
     
     // Crear Cuentas
@@ -38,10 +40,25 @@ module.exports = () => {
     router.get('/iniciar-sesion', usuariosController.formIniciarSesion);
     router.post('/iniciar-sesion', authController.autenticarUsuario);
 
+    // Cerrar Sesion
+    router.get('/cerrar-sesion',
+        authController.verificarUsuario,
+        authController.cerrarSesion
+    );
+
     // Panel de Administración
     router.get('/administracion',
         authController.verificarUsuario,
         authController.mostrarPanel);
+    
+    // Editar Perfil
+    router.get('/editar-perfil',
+        authController.verificarUsuario,
+        usuariosController.formEditarPerfil);
+    
+    router.post('/editar-perfil',
+        authController.verificarUsuario,
+        usuariosController.editarPerfil);
     
     return router;
 }
