@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Usuarios = require('../models/Usuarios');
 const Vacante = mongoose.model('Vacante');
 
 exports.formularioNuevaVacante = (req, res) => {
@@ -92,7 +93,7 @@ exports.validarVacante = (req, res, next) => {
         // Recargar la Vista con errores
         req.flash('error', errores.map(error => error.msg));
 
-         res.render('nueva-vacante', {
+        res.render('nueva-vacante', {
             nombrePagina: 'Nueva Vacante',
             tagline: 'Llena el formulario y publica tu vacante',
             cerrarSesion: true,
@@ -102,4 +103,26 @@ exports.validarVacante = (req, res, next) => {
     }
 
     next(); // Siguiente Middleware
+};
+
+exports.eliminarVacante = async (req, res) => {
+    const { id } = req.params;
+
+    const vacante = await Vacante.findById(id);
+
+    if (verificarAutor(vacante, req.user)) {
+        // Si puede eliminar
+        vacante.deleteOne();
+        res.status(200).send('Vacante eliminada Correctamente');
+    } else {
+        // No puede eliminar
+        res.status(203).send('Error');
+    }
+}
+
+const verificarAutor = (vacante = {}, usuario = {}) => {
+    if (!vacante.autor.equals(usuario._id)) {
+        return false;
+    }
+    return true;
 }

@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // Validación de Campos
-app.use(expressValidator());
+//app.use(expressValidator());
 
 // Habilitar Handlebars como View Engine
 app.engine('handlebars',
